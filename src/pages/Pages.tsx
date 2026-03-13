@@ -1,6 +1,6 @@
 import { Hero, KeyFeatures, QuickMenu, ProofAndTrust } from '../components/Sections';
 import { motion, AnimatePresence } from 'motion/react';
-import { ArrowRight, PhoneCall, MessageSquare } from 'lucide-react';
+import { ArrowRight, PhoneCall, MessageSquare, CheckCircle, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import React, { useState } from 'react';
 
@@ -292,7 +292,6 @@ export function ServicesPage() {
         message: '',
         agree: false
       });
-      alert('접수가 완료되었습니다. 담당자가 확인 후 연락드리겠습니다.');
     } catch (error) {
       console.error('Error submitting form:', error);
       alert('접수 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
@@ -300,6 +299,40 @@ export function ServicesPage() {
       setIsSubmitting(false);
     }
   };
+
+  if (isSuccess) {
+    return (
+      <div className="pt-32 pb-24 px-4 max-w-4xl mx-auto">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="bg-white p-12 md:p-20 rounded-3xl shadow-2xl border border-slate-100 text-center space-y-8"
+        >
+          <div className="flex justify-center">
+            <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center">
+              <CheckCircle className="w-12 h-12 text-green-600" />
+            </div>
+          </div>
+          <div className="space-y-4">
+            <h2 className="text-3xl font-bold text-slate-900">접수가 완료되었습니다!</h2>
+            <p className="text-lg text-slate-600 leading-relaxed">
+              상담 신청이 성공적으로 전달되었습니다.<br />
+              담당자가 확인 후 기재해주신 연락처로<br />
+              빠른 시일 내에 연락드리겠습니다.
+            </p>
+          </div>
+          <div className="pt-6">
+            <button 
+              onClick={() => setIsSuccess(false)}
+              className="px-10 py-4 bg-burgundy text-white rounded-xl font-bold hover:bg-opacity-90 transition-all shadow-lg"
+            >
+              확인
+            </button>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
     <div className="pt-32 pb-24 px-4 max-w-4xl mx-auto">
