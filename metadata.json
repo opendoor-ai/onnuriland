@@ -1,0 +1,7 @@
+{
+  "name": "힐스테이트 등촌역 프리미엄 랜딩",
+  "description": "힐스테이트 등촌역 분양권 매도/매수, 임대 접수 및 대기자 등록 전문 랜딩 페이지",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
