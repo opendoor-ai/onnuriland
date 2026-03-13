@@ -13,23 +13,10 @@ function ScrollToTop() {
   return null;
 }
 
-function GeoLocationRequest() {
-  useEffect(() => {
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        () => console.log("Location access granted"),
-        () => console.log("Location access denied")
-      );
-    }
-  }, []);
-  return null;
-}
-
 export default function App() {
   return (
     <Router>
       <ScrollToTop />
-      <GeoLocationRequest />
       <div className="flex flex-col min-h-screen">
         <Header />
         <main className="flex-grow">

@@ -2,7 +2,7 @@ import { Hero, KeyFeatures, QuickMenu, ProofAndTrust } from '../components/Secti
 import { motion, AnimatePresence } from 'motion/react';
 import { ArrowRight, PhoneCall, MessageSquare } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 export function MainPage() {
   return (
@@ -60,11 +60,11 @@ export function DetailsPage() {
   const [selectedPlan, setSelectedPlan] = useState('59A');
 
   const floorPlans = [
-    { id: '59A', name: '59A', img: 'https://res.cloudinary.com/dqhj5ucak/image/upload/v1773406130/onnuriland-12_ovw3u8.jpg' },
-    { id: '59B', name: '59B', img: 'https://res.cloudinary.com/dqhj5ucak/image/upload/v1773406130/onnuriland-13_cmp3ts.jpg' },
-    { id: '84A', name: '84A', img: 'https://res.cloudinary.com/dqhj5ucak/image/upload/v1773406132/onnuriland-14_ln1wdo.jpg' },
-    { id: '84B', name: '84B', img: 'https://res.cloudinary.com/dqhj5ucak/image/upload/v1773406133/onnuriland-15_wbawns.jpg' },
-    { id: '84C', name: '84C', img: 'https://res.cloudinary.com/dqhj5ucak/image/upload/v1773406131/onnuriland-16_pv7pyw.jpg' },
+    { id: '59A', name: '59㎡ A', img: 'https://res.cloudinary.com/dqhj5ucak/image/upload/v1773406130/onnuriland-12_ovw3u8.jpg' },
+    { id: '59B', name: '59㎡ B', img: 'https://res.cloudinary.com/dqhj5ucak/image/upload/v1773406130/onnuriland-13_cmp3ts.jpg' },
+    { id: '84A', name: '84㎡ A', img: 'https://res.cloudinary.com/dqhj5ucak/image/upload/v1773406132/onnuriland-14_ln1wdo.jpg' },
+    { id: '84B', name: '84㎡ B', img: 'https://res.cloudinary.com/dqhj5ucak/image/upload/v1773406133/onnuriland-15_wbawns.jpg' },
+    { id: '84C', name: '84㎡ C', img: 'https://res.cloudinary.com/dqhj5ucak/image/upload/v1773406131/onnuriland-16_pv7pyw.jpg' },
   ];
 
   return (
@@ -219,6 +219,88 @@ export function DetailsPage() {
 }
 
 export function ServicesPage() {
+  const [formData, setFormData] = useState({
+    type: '분양권 매도',
+    name: '',
+    phone: '',
+    emailId: '',
+    emailDomain: 'naver.com',
+    customDomain: '',
+    size: '59㎡ A',
+    message: '',
+    agree: false
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  const formatPhoneNumber = (value: string) => {
+    if (!value) return value;
+    const phoneNumber = value.replace(/[^\d]/g, '');
+    const phoneNumberLength = phoneNumber.length;
+    if (phoneNumberLength < 4) return phoneNumber;
+    if (phoneNumberLength < 8) {
+      return `${phoneNumber.slice(0, 3)}-${phoneNumber.slice(3)}`;
+    }
+    return `${phoneNumber.slice(0, 3)}-${phoneNumber.slice(3, 7)}-${phoneNumber.slice(7, 11)}`;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!formData.agree) {
+      alert('개인정보 수집 및 이용에 동의해주세요.');
+      return;
+    }
+
+    if (!formData.name || !formData.phone) {
+      alert('성함과 연락처를 입력해주세요.');
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const scriptUrl = 'https://script.google.com/macros/s/AKfycbxkMXbcyePlTzlSJT6O-saXRpNhw-zTWX0atdw8xl4zRrah75ktA5Aq8DYbQTE1upNNxQ/exec';
+      
+      const fullEmail = formData.emailDomain === 'custom' 
+        ? `${formData.emailId}@${formData.customDomain}`
+        : `${formData.emailId}@${formData.emailDomain}`;
+
+      // Using no-cors mode for Google Apps Script
+      await fetch(scriptUrl, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          email: fullEmail,
+          agree: formData.agree ? '동의함' : '동의안함'
+        }),
+      });
+
+      setIsSuccess(true);
+      setFormData({
+        type: '분양권 매도',
+        name: '',
+        phone: '',
+        emailId: '',
+        emailDomain: 'naver.com',
+        customDomain: '',
+        size: '59㎡ A',
+        message: '',
+        agree: false
+      });
+      alert('접수가 완료되었습니다. 담당자가 확인 후 연락드리겠습니다.');
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      alert('접수 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="pt-32 pb-24 px-4 max-w-4xl mx-auto">
       <div className="text-center mb-16">
@@ -226,11 +308,15 @@ export function ServicesPage() {
         <p className="text-slate-600">빠르고 정확한 상담을 위해 아래 정보를 입력해 주세요.</p>
       </div>
 
-      <form className="bg-white p-8 md:p-12 rounded-3xl shadow-xl border border-slate-100 space-y-8">
+      <form onSubmit={handleSubmit} className="bg-white p-8 md:p-12 rounded-3xl shadow-xl border border-slate-100 space-y-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
             <label className="text-sm font-bold text-slate-700">접수 구분 <span className="text-red-500">*</span></label>
-            <select className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-burgundy outline-none">
+            <select 
+              value={formData.type}
+              onChange={(e) => setFormData({...formData, type: e.target.value})}
+              className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-burgundy outline-none"
+            >
               <option>분양권 매도</option>
               <option>분양권 매수</option>
               <option>전세/월세 임대</option>
@@ -240,19 +326,82 @@ export function ServicesPage() {
           </div>
           <div className="space-y-2">
             <label className="text-sm font-bold text-slate-700">성함 <span className="text-red-500">*</span></label>
-            <input type="text" placeholder="성함을 입력하세요" className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-burgundy outline-none" />
+            <input 
+              type="text" 
+              placeholder="성함을 입력하세요" 
+              value={formData.name}
+              onChange={(e) => setFormData({...formData, name: e.target.value})}
+              className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-burgundy outline-none" 
+              required
+            />
           </div>
           <div className="space-y-2">
             <label className="text-sm font-bold text-slate-700">연락처 <span className="text-red-500">*</span></label>
-            <input type="tel" placeholder="010-0000-0000" className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-burgundy outline-none" />
+            <input 
+              type="tel" 
+              placeholder="010-0000-0000" 
+              value={formData.phone}
+              onChange={(e) => {
+                const formatted = formatPhoneNumber(e.target.value);
+                setFormData({...formData, phone: formatted});
+              }}
+              maxLength={13}
+              className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-burgundy outline-none" 
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-bold text-slate-700">이메일 주소 <span className="text-red-500">*</span></label>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <div className="flex-1 flex items-center gap-2">
+                <input 
+                  type="text" 
+                  placeholder="아이디" 
+                  value={formData.emailId}
+                  onChange={(e) => setFormData({...formData, emailId: e.target.value})}
+                  className="flex-1 p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-burgundy outline-none" 
+                  required
+                />
+                <span className="text-slate-400">@</span>
+              </div>
+              <div className="flex-1 flex gap-2">
+                {formData.emailDomain === 'custom' ? (
+                  <input 
+                    type="text" 
+                    placeholder="직접 입력" 
+                    value={formData.customDomain}
+                    onChange={(e) => setFormData({...formData, customDomain: e.target.value})}
+                    className="flex-1 p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-burgundy outline-none"
+                    required
+                  />
+                ) : null}
+                <select 
+                  value={formData.emailDomain}
+                  onChange={(e) => setFormData({...formData, emailDomain: e.target.value})}
+                  className={`${formData.emailDomain === 'custom' ? 'w-24' : 'flex-1'} p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-burgundy outline-none`}
+                >
+                  <option value="naver.com">naver.com</option>
+                  <option value="gmail.com">gmail.com</option>
+                  <option value="daum.net">daum.net</option>
+                  <option value="hanmail.net">hanmail.net</option>
+                  <option value="nate.com">nate.com</option>
+                  <option value="custom">직접 입력</option>
+                </select>
+              </div>
+            </div>
           </div>
           <div className="space-y-2">
             <label className="text-sm font-bold text-slate-700">희망 평형/타입</label>
-            <select className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-burgundy outline-none">
-              <option>59㎡ A타입</option>
-              <option>59㎡ B타입</option>
-              <option>84㎡ A타입</option>
-              <option>84㎡ B타입</option>
+            <select 
+              value={formData.size}
+              onChange={(e) => setFormData({...formData, size: e.target.value})}
+              className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-burgundy outline-none"
+            >
+              <option>59㎡ A</option>
+              <option>59㎡ B</option>
+              <option>84㎡ A</option>
+              <option>84㎡ B</option>
+              <option>84㎡ C</option>
               <option>기타/상관없음</option>
             </select>
           </div>
@@ -260,12 +409,25 @@ export function ServicesPage() {
 
         <div className="space-y-2">
           <label className="text-sm font-bold text-slate-700">상세 문의 내용</label>
-          <textarea rows={4} placeholder="동/호수, 희망 가격, 입주 시기 등 상세 내용을 입력하시면 더 정확한 상담이 가능합니다." className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-burgundy outline-none"></textarea>
+          <textarea 
+            rows={4} 
+            placeholder="동/호수, 희망 가격, 입주 시기 등 상세 내용을 입력하시면 더 정확한 상담이 가능합니다." 
+            value={formData.message}
+            onChange={(e) => setFormData({...formData, message: e.target.value})}
+            className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-burgundy outline-none"
+          ></textarea>
         </div>
 
         <div className="p-4 bg-slate-50 rounded-lg border border-slate-200">
           <div className="flex items-center gap-2 mb-2">
-            <input type="checkbox" id="privacy" className="w-4 h-4 accent-burgundy" />
+            <input 
+              type="checkbox" 
+              id="privacy" 
+              checked={formData.agree}
+              onChange={(e) => setFormData({...formData, agree: e.target.checked})}
+              className="w-4 h-4 accent-burgundy" 
+              required
+            />
             <label htmlFor="privacy" className="text-sm font-bold text-slate-700">개인정보 수집 및 이용 동의 (필수)</label>
           </div>
           <p className="text-xs text-slate-500 leading-relaxed">
@@ -273,8 +435,12 @@ export function ServicesPage() {
           </p>
         </div>
 
-        <button type="submit" className="w-full bg-burgundy text-white py-5 rounded-xl font-bold text-xl hover:bg-opacity-90 transition-all shadow-lg">
-          접수 신청하기
+        <button 
+          type="submit" 
+          disabled={isSubmitting}
+          className={`w-full bg-burgundy text-white py-5 rounded-xl font-bold text-xl hover:bg-opacity-90 transition-all shadow-lg ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
+        >
+          {isSubmitting ? '전송 중...' : '접수 신청하기'}
         </button>
       </form>
     </div>
@@ -349,7 +515,7 @@ export function ContactPage() {
                 { q: "Q1. 힐스테이트 등촌역 분양권은 언제부터 거래가 가능한가요?", a: "힐스테이트 등촌역 분양권은 2025년 12월 13일부터 거래가 가능합니다. 현재 거래 가능한 매물 및 예상 프리미엄은 상담을 통해 안내받으실 수 있습니다." },
                 { q: "Q2. 힐스테이트 등촌역 위치는 어디인가요?", a: "힐스테이트 등촌역은 서울 강서구 등촌동 366-24번지에 위치한 등촌제1구역 재건축 아파트입니다." },
                 { q: "Q3. 힐스테이트 등촌역 총 세대수는 몇 세대인가요?", a: "총 543세대 규모의 아파트 단지이며, 이 중 일반분양은 274세대입니다." },
-                { q: "Q4. 힐스테이트 등촌역 평형 구성은 어떻게 되나요?", a: "힐스테이트 등촌역은 다음 평형으로 구성되어 있습니다: 79㎡, 80㎡, 111㎡, 112㎡. 각 평형은 방 3개, 욕실 2개 구조입니다." },
+                { q: "Q4. 힐스테이트 등촌역 평형 구성은 어떻게 되나요?", a: "힐스테이트 등촌역은 다음 평형으로 구성되어 있습니다: 59㎡ A, 59㎡ B, 84㎡ A, 84㎡ B, 84㎡ C. 각 평형은 방 3개, 욕실 2개 구조입니다." },
                 { q: "Q5. 힐스테이트 등촌역 분양권 매물은 어떻게 확인할 수 있나요?", a: "현재 거래 가능한 분양권 매물은 수시로 변동됩니다. 상담 신청 또는 전화 상담을 통해 최신 매물 정보를 안내받으실 수 있습니다." },
                 { q: "Q6. 힐스테이트 등촌역 분양권 매도도 접수 가능한가요?", a: "네 가능합니다. 보유하고 있는 힐스테이트 등촌역 분양권 매도 접수를 하시면 매수 희망 고객에게 연결해드립니다." },
                 { q: "Q7. 힐스테이트 등촌역 분양권 매수 상담은 어떻게 하나요?", a: "희망 평형과 예산을 접수하시면 현재 거래 가능한 매물 및 예상 프리미엄을 안내해드립니다." },
