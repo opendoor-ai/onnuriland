@@ -617,3 +617,50 @@ export function ContactPage() {
     </div>
   );
 }
+
+export function TermsPage() {
+  return (
+    <div className="pt-32 pb-24 px-4 max-w-4xl mx-auto">
+      <div className="bg-white p-8 md:p-12 rounded-3xl shadow-xl border border-slate-100">
+        <h1 className="text-3xl font-bold text-slate-900 mb-8 pb-4 border-b border-slate-100">이용약관</h1>
+        
+        <div className="space-y-8 text-slate-600 leading-relaxed">
+          <section>
+            <h2 className="text-xl font-bold text-slate-800 mb-4">제 1 조 (목적)</h2>
+            <p>본 약관은 온누리공인중개사사무소(이하 "회사")가 운영하는 힐스테이트 등촌역 홍보 웹사이트(이하 "사이트")에서 제공하는 서비스의 이용조건 및 절차에 관한 사항을 규정함을 목적으로 합니다.</p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold text-slate-800 mb-4">제 2 조 (약관의 효력 및 변경)</h2>
+            <p>1. 본 약관은 사이트 화면에 게시하거나 기타의 방법으로 이용자에게 공지함으로써 효력이 발생합니다.</p>
+            <p>2. 회사는 필요하다고 인정되는 경우 이 약관을 변경할 수 있으며, 변경된 약관은 제1항과 같은 방법으로 공지함으로써 효력이 발생합니다.</p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold text-slate-800 mb-4">제 3 조 (서비스의 제공 및 변경)</h2>
+            <p>1. 사이트는 다음과 같은 업무를 수행합니다.</p>
+            <ul className="list-disc ml-6 mt-2 space-y-1">
+              <li>부동산 매물 정보 제공 및 상담 신청 접수</li>
+              <li>분양권 및 임대차 관련 정보 제공</li>
+              <li>기타 회사가 정하는 업무</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold text-slate-800 mb-4">제 4 조 (개인정보보호)</h2>
+            <p>회사는 이용자의 개인정보를 보호하기 위하여 관계 법령이 정하는 바에 따라 개인정보를 관리하며, 상세한 내용은 별도의 개인정보처리방침에 따릅니다.</p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold text-slate-800 mb-4">제 5 조 (이용자의 의무)</h2>
+            <p>이용자는 본 사이트를 이용함에 있어 관계 법령 및 본 약관의 규정을 준수하여야 하며, 타인의 권익을 침해하거나 사이트의 정상적인 운영을 방해하는 행위를 해서는 안 됩니다.</p>
+          </section>
+
+          <section className="pt-8 border-t border-slate-100 text-sm">
+            <p>부칙: 본 약관은 2026년 3월 14일부터 시행됩니다.</p>
+          </section>
+        </div>
+      </div>
+    </div>
+  );
+}

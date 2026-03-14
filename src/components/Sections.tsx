@@ -34,7 +34,7 @@ export function Hero() {
           {/* White Heading Text with Strong Text Shadow */}
           <h1 className="text-5xl md:text-7xl font-bold leading-tight mb-6 drop-shadow-[0_5px_15px_rgba(0,0,0,0.8)]">
             9호선 프리미엄의 완성,<br />
-            <span className="text-gold">힐스테이트 등촌역</span>
+            <span className="text-gold">힐스테이트 등촌역</span> <span className="text-3xl md:text-4xl block mt-2 opacity-90">온누리부동산</span>
           </h1>
           <p className="text-lg md:text-xl text-white mb-10 leading-relaxed font-medium drop-shadow-lg">
             마곡, 여의도, 강남을 잇는 황금노선 9호선의 가치와<br />

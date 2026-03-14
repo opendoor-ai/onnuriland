@@ -38,7 +38,7 @@ export function Header() {
             <span className="text-white font-bold text-xl italic">H</span>
           </div>
           <span className={`font-bold text-xl tracking-tight ${isTransparent ? 'text-white drop-shadow-sm' : 'text-burgundy'}`}>
-            힐스테이트 <span className="text-secondary">등촌역</span>
+            힐스테이트 <span className="text-secondary">등촌역</span> <span className="text-sm font-normal opacity-70">온누리부동산</span>
           </span>
         </Link>
 
@@ -126,7 +126,7 @@ export function Footer() {
               <span className="text-white font-bold text-sm italic">H</span>
             </div>
             <span className="font-bold text-lg text-white tracking-tight">
-              힐스테이트 등촌역 <span className="text-secondary text-sm font-normal ml-2">분양권/임대 전문</span>
+              힐스테이트 등촌역 <span className="text-secondary text-sm font-normal ml-2">온누리부동산</span>
             </span>
           </div>
           <p className="text-sm leading-relaxed mb-6 max-w-md">
@@ -145,7 +145,7 @@ export function Footer() {
             <li><Link to="/details" className="hover:text-secondary transition-colors">단지 상세 정보</Link></li>
             <li><Link to="/services" className="hover:text-secondary transition-colors">매물 접수하기</Link></li>
             <li><Link to="/about" className="hover:text-secondary transition-colors">입지 프리미엄</Link></li>
-            <li><Link to="/contact" className="hover:text-secondary transition-colors">오시는 길</Link></li>
+            <li><Link to="/contact" className="hover:text-secondary transition-colors">고객센터</Link></li>
           </ul>
         </div>
 
@@ -154,7 +154,7 @@ export function Footer() {
           <ul className="space-y-3 text-sm">
             <li><Link to="/contact" className="hover:text-secondary transition-colors">자주 묻는 질문</Link></li>
             <li><a href="#" className="hover:text-secondary transition-colors">개인정보처리방침</a></li>
-            <li><a href="#" className="hover:text-secondary transition-colors">이용약관</a></li>
+            <li><Link to="/terms" className="hover:text-secondary transition-colors">이용약관</Link></li>
           </ul>
         </div>
       </div>
