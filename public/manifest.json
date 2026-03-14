@@ -1,7 +1,7 @@
 {
-  "name": "힐스테이트 등촌역 프리미엄 랜딩",
-  "short_name": "힐스테이트 등촌",
-  "description": "힐스테이트 등촌역 분양권 매도/매수, 임대 접수 전문",
+  "name": "힐스테이트 등촌역 온누리부동산",
+  "short_name": "힐스테이트 등촌역 온누리부동산",
+  "description": "힐스테이트 등촌역 분양권 매도/매수, 임대 접수 및 대기자 등록 전문 온누리부동산",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#F8F9FA",

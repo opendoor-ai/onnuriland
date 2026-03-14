@@ -29,7 +29,7 @@ export function MainPage() {
         <div className="relative z-10 max-w-4xl mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-5xl font-bold text-white mb-8 leading-tight">
             당신의 소중한 자산,<br />
-            <span className="text-gold">힐스테이트 등촌역 전문가</span>와 상의하세요.
+            <span className="text-gold">힐스테이트 등촌역 온누리부동산 전문가</span>와 상의하세요.
           </h2>
           <p className="text-slate-300 text-lg mb-12">
             매도/매수 접수부터 임대차, 관심고객 등록까지<br className="hidden md:block" />
@@ -218,6 +218,35 @@ export function DetailsPage() {
   );
 }
 
+const KO_TO_EN_MAP: { [key: string]: string } = {
+  'ㄱ': 'r', 'ㄲ': 'R', 'ㄴ': 's', 'ㄷ': 'e', 'ㄸ': 'E', 'ㄹ': 'f', 'ㅁ': 'a', 'ㅂ': 'q', 'ㅃ': 'Q', 'ㅅ': 't', 'ㅆ': 'T', 'ㅇ': 'd', 'ㅈ': 'w', 'ㅉ': 'W', 'ㅊ': 'c', 'ㅋ': 'z', 'ㅌ': 'x', 'ㅍ': 'v', 'ㅎ': 'g',
+  'ㅏ': 'k', 'ㅐ': 'o', 'ㅑ': 'i', 'ㅒ': 'O', 'ㅓ': 'j', 'ㅔ': 'p', 'ㅕ': 'u', 'ㅖ': 'P', 'ㅗ': 'h', 'ㅘ': 'hk', 'ㅙ': 'ho', 'ㅚ': 'hl', 'ㅛ': 'y', 'ㅜ': 'n', 'ㅝ': 'nj', 'ㅞ': 'np', 'ㅟ': 'nl', 'ㅠ': 'b', 'ㅡ': 'm', 'ㅢ': 'ml', 'ㅣ': 'l',
+  'ㄳ': 'rt', 'ㄵ': 'sw', 'ㄶ': 'sg', 'ㄺ': 'fr', 'ㄻ': 'fa', 'ㄼ': 'fq', 'ㄽ': 'ft', 'ㄾ': 'fx', 'ㄿ': 'fv', 'ㅀ': 'fg', 'ㅄ': 'qt'
+};
+
+const INITIALS = ['r', 'R', 's', 'e', 'E', 'f', 'a', 'q', 'Q', 't', 'T', 'd', 'w', 'W', 'c', 'z', 'x', 'v', 'g'];
+const MEDIALS = ['k', 'o', 'i', 'O', 'j', 'p', 'u', 'P', 'h', 'hk', 'ho', 'hl', 'y', 'n', 'nj', 'np', 'nl', 'b', 'm', 'ml', 'l'];
+const FINALS = ['', 'r', 'R', 'rt', 's', 'sw', 'sg', 'e', 'f', 'fr', 'fa', 'fq', 'ft', 'fx', 'fv', 'fg', 'a', 'q', 'qt', 't', 'T', 'tw', 'z', 'c', 'x', 'v', 'g'];
+
+const convertKoToEn = (text: string) => {
+  let result = '';
+  for (let i = 0; i < text.length; i++) {
+    const code = text.charCodeAt(i);
+    if (code >= 0xAC00 && code <= 0xD7A3) {
+      const sIndex = code - 0xAC00;
+      const initial = Math.floor(sIndex / 588);
+      const medial = Math.floor((sIndex % 588) / 28);
+      const final = sIndex % 28;
+      result += INITIALS[initial] + MEDIALS[medial] + FINALS[final];
+    } else if (KO_TO_EN_MAP[text[i]]) {
+      result += KO_TO_EN_MAP[text[i]];
+    } else {
+      result += text[i];
+    }
+  }
+  return result;
+};
+
 export function ServicesPage() {
   const [formData, setFormData] = useState({
     type: '분양권 매도',
@@ -260,7 +289,7 @@ export function ServicesPage() {
     setIsSubmitting(true);
 
     try {
-      const scriptUrl = 'https://script.google.com/macros/s/AKfycbxkMXbcyePlTzlSJT6O-saXRpNhw-zTWX0atdw8xl4zRrah75ktA5Aq8DYbQTE1upNNxQ/exec';
+      const scriptUrl = 'https://script.google.com/macros/s/AKfycbzZNUpgflq_VWmt7idTIZy2aiV2FdJcDJAMUZC-T2-IlASY60njleLdl-w7PN5rsnslYg/exec';
       
       const fullEmail = formData.emailDomain === 'custom' 
         ? `${formData.emailId}@${formData.customDomain}`
@@ -363,7 +392,10 @@ export function ServicesPage() {
               type="text" 
               placeholder="성함을 입력하세요" 
               value={formData.name}
-              onChange={(e) => setFormData({...formData, name: e.target.value})}
+              onChange={(e) => {
+                const value = e.target.value.replace(/[^ㄱ-ㅎ|ㅏ-ㅣ|가-힣a-zA-Z\s]/g, '');
+                setFormData({...formData, name: value});
+              }}
               className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-burgundy outline-none" 
               required
             />
@@ -383,27 +415,35 @@ export function ServicesPage() {
               required
             />
           </div>
-          <div className="space-y-2">
+          <div className="space-y-2 md:col-span-2">
             <label className="text-sm font-bold text-slate-700">이메일 주소 <span className="text-red-500">*</span></label>
-            <div className="flex flex-col sm:flex-row gap-2">
-              <div className="flex-1 flex items-center gap-2">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+              <div className="w-full sm:w-auto flex-1 flex items-center gap-2">
                 <input 
                   type="text" 
-                  placeholder="아이디" 
+                  placeholder="아이디 (영문)" 
                   value={formData.emailId}
-                  onChange={(e) => setFormData({...formData, emailId: e.target.value})}
+                  onChange={(e) => {
+                    const converted = convertKoToEn(e.target.value);
+                    const value = converted.replace(/[^a-zA-Z0-9._-]/g, '');
+                    setFormData({...formData, emailId: value});
+                  }}
                   className="flex-1 p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-burgundy outline-none" 
                   required
                 />
                 <span className="text-slate-400">@</span>
               </div>
-              <div className="flex-1 flex gap-2">
+              <div className="w-full sm:w-auto flex-1 flex flex-col sm:flex-row gap-2">
                 {formData.emailDomain === 'custom' ? (
                   <input 
                     type="text" 
                     placeholder="직접 입력" 
                     value={formData.customDomain}
-                    onChange={(e) => setFormData({...formData, customDomain: e.target.value})}
+                    onChange={(e) => {
+                      const converted = convertKoToEn(e.target.value);
+                      const value = converted.replace(/[^a-zA-Z0-9.-]/g, '');
+                      setFormData({...formData, customDomain: value});
+                    }}
                     className="flex-1 p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-burgundy outline-none"
                     required
                   />
@@ -411,7 +451,7 @@ export function ServicesPage() {
                 <select 
                   value={formData.emailDomain}
                   onChange={(e) => setFormData({...formData, emailDomain: e.target.value})}
-                  className={`${formData.emailDomain === 'custom' ? 'w-24' : 'flex-1'} p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-burgundy outline-none`}
+                  className={`${formData.emailDomain === 'custom' ? 'sm:w-40' : 'flex-1'} p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-burgundy outline-none`}
                 >
                   <option value="naver.com">naver.com</option>
                   <option value="gmail.com">gmail.com</option>
@@ -444,6 +484,8 @@ export function ServicesPage() {
           <label className="text-sm font-bold text-slate-700">상세 문의 내용</label>
           <textarea 
             rows={4} 
+            lang="ko"
+            style={{ imeMode: 'active' }}
             placeholder="동/호수, 희망 가격, 입주 시기 등 상세 내용을 입력하시면 더 정확한 상담이 가능합니다." 
             value={formData.message}
             onChange={(e) => setFormData({...formData, message: e.target.value})}
@@ -627,7 +669,7 @@ export function TermsPage() {
         <div className="space-y-8 text-slate-600 leading-relaxed">
           <section>
             <h2 className="text-xl font-bold text-slate-800 mb-4">제 1 조 (목적)</h2>
-            <p>본 약관은 온누리공인중개사사무소(이하 "회사")가 운영하는 힐스테이트 등촌역 홍보 웹사이트(이하 "사이트")에서 제공하는 서비스의 이용조건 및 절차에 관한 사항을 규정함을 목적으로 합니다.</p>
+            <p>본 약관은 온누리공인중개사사무소(이하 "회사")가 운영하는 힐스테이트 등촌역 온누리부동산 홈페이지(이하 "사이트")에서 제공하는 서비스의 이용조건 및 절차에 관한 사항을 규정함을 목적으로 합니다.</p>
           </section>
 
           <section>
@@ -658,6 +700,55 @@ export function TermsPage() {
 
           <section className="pt-8 border-t border-slate-100 text-sm">
             <p>부칙: 본 약관은 2026년 3월 14일부터 시행됩니다.</p>
+          </section>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function PrivacyPage() {
+  return (
+    <div className="pt-32 pb-24 px-4 max-w-4xl mx-auto">
+      <div className="bg-white p-8 md:p-12 rounded-3xl shadow-xl border border-slate-100">
+        <h1 className="text-3xl font-bold text-slate-900 mb-8 pb-4 border-b border-slate-100">개인정보처리방침</h1>
+        
+        <div className="space-y-8 text-slate-600 leading-relaxed">
+          <section>
+            <h2 className="text-xl font-bold text-slate-800 mb-4">1. 개인정보의 수집 및 이용 목적</h2>
+            <p>회사는 다음의 목적을 위하여 개인정보를 처리합니다. 처리하고 있는 개인정보는 다음의 목적 이외의 용도로는 이용되지 않으며, 이용 목적이 변경되는 경우에는 별도의 동의를 받는 등 필요한 조치를 이행할 예정입니다.</p>
+            <ul className="list-disc ml-6 mt-2 space-y-1">
+              <li>부동산 매물 상담 및 관련 정보 제공</li>
+              <li>고객 문의 응대 및 본인 확인</li>
+              <li>단지 소식 및 마케팅 정보 활용 (선택 시)</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold text-slate-800 mb-4">2. 수집하는 개인정보 항목</h2>
+            <p>회사는 서비스 제공을 위해 다음과 같은 개인정보를 수집하고 있습니다.</p>
+            <ul className="list-disc ml-6 mt-2 space-y-1">
+              <li>필수항목: 성함, 연락처, 이메일 주소</li>
+              <li>선택항목: 문의 내용에 포함된 정보</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold text-slate-800 mb-4">3. 개인정보의 보유 및 이용 기간</h2>
+            <p>이용자의 개인정보는 원칙적으로 개인정보의 수집 및 이용목적이 달성되면 지체 없이 파기합니다. 단, 관계법령의 규정에 의하여 보존할 필요가 있는 경우 회사는 아래와 같이 관계법령에서 정한 일정한 기간 동안 회원정보를 보관합니다.</p>
+            <ul className="list-disc ml-6 mt-2 space-y-1">
+              <li>상담 기록: 상담 완료 후 1년</li>
+              <li>소비자의 불만 또는 분쟁처리에 관한 기록: 3년</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold text-slate-800 mb-4">4. 개인정보의 파기절차 및 방법</h2>
+            <p>회사는 개인정보 보유기간의 경과, 처리목적 달성 등 개인정보가 불필요하게 되었을 때에는 지체 없이 해당 개인정보를 파기합니다. 전자적 파일 형태의 정보는 기록을 재생할 수 없는 기술적 방법을 사용하며, 종이 문서에 출력된 개인정보는 분쇄기로 분쇄하거나 소각을 통하여 파기합니다.</p>
+          </section>
+
+          <section className="pt-8 border-t border-slate-100 text-sm">
+            <p>공고일자: 2026년 3월 14일 / 시행일자: 2026년 3월 14일</p>
           </section>
         </div>
       </div>

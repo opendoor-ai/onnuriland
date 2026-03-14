@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-route
 import { useEffect } from 'react';
 import { Header, Footer } from './components/Layout';
 import { FloatingButtons } from './components/FloatingButtons';
-import { MainPage, DetailsPage, ServicesPage, AboutPage, ContactPage, TermsPage } from './pages/Pages';
+import { MainPage, DetailsPage, ServicesPage, AboutPage, ContactPage, TermsPage, PrivacyPage } from './pages/Pages';
 import { AnimatePresence } from 'motion/react';
 
 function ScrollToTop() {
@@ -28,6 +28,7 @@ export default function App() {
               <Route path="/about" element={<AboutPage />} />
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/terms" element={<TermsPage />} />
+              <Route path="/privacy" element={<PrivacyPage />} />
             </Routes>
           </AnimatePresence>
         </main>

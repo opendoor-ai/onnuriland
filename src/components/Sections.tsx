@@ -182,7 +182,18 @@ export function ProofAndTrust() {
               </div>
               <div>
                 <p className="text-xs text-slate-500 uppercase font-bold tracking-tighter">Direct Call</p>
-                <p className="text-2xl font-bold text-burgundy">010-4360-8872</p>
+                <a 
+                  href="tel:01043608872"
+                  onClick={(e) => {
+                    if (window.innerWidth > 1024) {
+                      e.preventDefault();
+                      window.dispatchEvent(new CustomEvent('open-phone-modal'));
+                    }
+                  }}
+                  className="text-2xl font-bold text-burgundy hover:text-gold transition-colors"
+                >
+                  010-4360-8872
+                </a>
               </div>
             </div>
           </div>
